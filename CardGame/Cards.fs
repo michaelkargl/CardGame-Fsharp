@@ -18,35 +18,19 @@ type Suit =
         | _ -> "♤"
 
 type Rank =
-    | Two
-    | Three
-    | Four
-    | Five
-    | Six
-    | Seven
-    | Eight
-    | Nine
-    | Ten
-    | Jack
-    | Queen
-    | King
-    | Ace
-
-    member public this.ToString: string =
-        match this with
-        | Two -> "2"
-        | Three -> "3"
-        | Four -> "4"
-        | Five -> "5"
-        | Six -> "6"
-        | Seven -> "7"
-        | Eight -> "8"
-        | Nine -> "9"
-        | Ten -> "T"
-        | Jack -> "J"
-        | Queen -> "Q"
-        | King -> "K"
-        | Ace -> "A"
+    | Ace = 1
+    | Two = 2
+    | Three = 3
+    | Four = 4
+    | Five = 5
+    | Six = 6
+    | Seven = 7
+    | Eight = 8
+    | Nine = 9
+    | Ten = 10
+    | Jack = 11
+    | Queen = 12
+    | King = 13
 
 // do not reorder the tuple! Only append!
 type Card = Card of Suit * Rank
@@ -60,7 +44,19 @@ type Dealing = ShuffledDeck * Card option
 let allSuits = [ Hearts; Diamonds; Clubs; Spades ]
 
 let allRanks =
-    [ Two; Three; Four; Five; Six; Seven; Eight; Nine; Ten; Jack; Queen; King; Ace ]
+    [ Rank.Two
+      Rank.Three
+      Rank.Four
+      Rank.Five
+      Rank.Six
+      Rank.Seven
+      Rank.Eight
+      Rank.Nine
+      Rank.Ten
+      Rank.Jack
+      Rank.Queen
+      Rank.King
+      Rank.Ace ]
 
 let newDeck =
     allSuits
@@ -87,13 +83,31 @@ let unpackCard (Card(suit, rank)) : Suit * Rank = (suit, rank)
 let countCardsInDeck (deck: Deck) : int = deck.Length
 let countCardsInShuffledDeck (deck: ShuffledDeck) : int = deck |> unpackDeck |> countCardsInDeck
 
+let rankToString (rank: Rank) : string =
+    match rank with
+    | Rank.Two
+    | Rank.Three
+    | Rank.Four
+    | Rank.Five
+    | Rank.Six
+    | Rank.Seven
+    | Rank.Eight
+    | Rank.Nine -> (int rank).ToString()
+    | Rank.Ten -> "T"
+    | Rank.Jack -> "J"
+    | Rank.Queen -> "Q"
+    | Rank.King -> "K"
+    | Rank.Ace -> "A"
+    | _ -> "X"
+
+
 let getCardShortString (card: Card option) : string =
     match card with
     | None -> "XXX"
     | Some c ->
         c
         |> unpackCard
-        |> fun (suit, rank) -> sprintf "%s%s" suit.ToString rank.ToString
+        |> fun (suit, rank) -> sprintf "%s%s" suit.ToString (rankToString rank)
 
 let getCardString (card: Card option) : string =
     match card with
@@ -101,7 +115,8 @@ let getCardString (card: Card option) : string =
     | Some c ->
         c
         |> unpackCard
-        |> fun (suit, rank) -> sprintf "┌───┐\n│%s  │\n│ %s │\n│  %s│\n└───┘" rank.ToString suit.ToString rank.ToString
+        |> fun (suit, rank) ->
+            sprintf "┌───┐\n│%s  │\n│ %s │\n│  %s│\n└───┘" (rankToString rank) suit.ToString (rankToString rank)
 
 let printCard (card: Card option) : unit = card |> getCardString |> printfn "%s\n"
 
@@ -110,7 +125,5 @@ let printDeckOverview (count: int) (deck: Deck) : unit =
     deck
     |> List.take count
     |> List.iter (fun card ->
-            let cardShort = getCardShortString (Some card)
-            printf "%s " cardShort)
-
-        
+        let cardShort = getCardShortString (Some card)
+        printf "%s " cardShort)

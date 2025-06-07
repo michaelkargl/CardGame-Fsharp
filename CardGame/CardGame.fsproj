@@ -8,7 +8,9 @@
     <ItemGroup>
         <Compile Include="Cards.fs" />
         <Compile Include="Program.fs"/>
-        <Content Include="README.md" />
+        <Content Include="..\README.md">
+          <Link>README.md</Link>
+        </Content>
     </ItemGroup>
 
 </Project>

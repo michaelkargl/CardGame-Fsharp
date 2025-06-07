@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <Compile Include="DealingTest.fs" />
+        <Compile Include="ScoringTest.fs" />
     </ItemGroup>
 
     <ItemGroup>

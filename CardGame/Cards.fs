@@ -37,9 +37,13 @@ type Card = Card of Suit * Rank
 
 type Deck = Card list
 
+type Hand = Card list
+
+type Player = { Hand: Hand }
+
 type ShuffledDeck = ShuffledDeck of Deck
 
-type Dealing = ShuffledDeck * Card option
+type Dealing = ShuffledDeck * Player
 
 let allSuits = [ Hearts; Diamonds; Clubs; Spades ]
 
@@ -66,13 +70,16 @@ let newDeck =
 let shuffle (seed: int) (deck: Deck) : ShuffledDeck =
     ShuffledDeck(deck |> List.randomShuffleWith (Random seed))
 
-let dealCard (deck: ShuffledDeck) : Dealing =
+let dealCard (deck: ShuffledDeck) (player: Player) : Dealing =
     match deck with
-    | ShuffledDeck innerDeck when List.isEmpty innerDeck -> (ShuffledDeck [], None)
+    | ShuffledDeck innerDeck when List.isEmpty innerDeck -> (ShuffledDeck [], player)
     | ShuffledDeck innerDeck ->
         let topCard = Some innerDeck.Head
         let restDeck = ShuffledDeck(innerDeck.Tail)
-        (restDeck, topCard)
+
+        (restDeck,
+         { player with
+             Hand = topCard.Value :: player.Hand })
 
 // helper function to unpack a ShuffledDeck into a Deck
 // so that we can act on the set of cards more cleanly
@@ -120,10 +127,17 @@ let getCardString (card: Card option) : string =
 
 let printCard (card: Card option) : unit = card |> getCardString |> printfn "%s\n"
 
-
 let printDeckOverview (count: int) (deck: Deck) : unit =
     deck
     |> List.take count
     |> List.iter (fun card ->
         let cardShort = getCardShortString (Some card)
         printf "%s " cardShort)
+
+let getPlayerScore (player: Player) : int =
+    match player.Hand.Length with
+    | 0 -> 0
+    | 1 ->
+        let (Card(_, rank)) = player.Hand.Head
+        int rank
+    | _ -> player.Hand |> List.sumBy (fun (Card(_, rank)) -> int rank)

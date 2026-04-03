@@ -2,7 +2,7 @@
 
 A terminal black-jack like card game written in F#
 
-![terminal recording](./rec.svg)
+![terminal recording](images/rec.svg)
 
 ## Quality Goals
 
